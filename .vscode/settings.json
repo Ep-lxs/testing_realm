@@ -1,0 +1,33 @@
+{
+    "robloxLsp.diagnostics.globals": [
+        "syn",
+        "gethui",
+        "firetouchinterest",
+        "getgenv",
+        "isnetworkowner",
+        "setscriptable",
+        "newcclosure",
+        "hookfunction",
+        "getconnections",
+        "writefile",
+        "isfolder",
+        "isfile",
+        "makefolder",
+        "readfile",
+        "hookmetamethod",
+        "getnamecallmethod",
+        "delfolder",
+        "delfile",
+        "setclipboard",
+        "sethiddenproperty",
+        "fireclickdetector",
+        "fireproximityprompt",
+        "Drawing",
+        "gethiddenproperty",
+        "checkcaller",
+        "getrawmetatable",
+        "setreadonly",
+        "listfiles",
+        "saveinstance"
+    ]
+}

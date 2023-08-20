@@ -222,6 +222,13 @@ local function onCharacterAdded(player: Player, character: Model)
 	local humanoid = character:WaitForChild("Humanoid", math.huge)
 	humanoid.DisplayDistanceType = if config.ESP.text.enabled then Enum.HumanoidDisplayDistanceType.None else Enum.HumanoidDisplayDistanceType.Viewer
 
+	humanoidModule:AddConnection(player.UserId, humanoid.Died:Once(function()
+		local data = esp.list[player]
+		if data then
+			data:Destroy()
+		end
+	end))
+
 	local data = esp.list[player]
 	if data then
 		data:Destroy()

@@ -8,34 +8,6 @@ TO DO:
 AFTER TO DO:
 - boxes and text (drawing.new) EWWW
 ]]
-
-getgenv().config = {
-	ESP = {
-		chams = {
-			enabled = true,
-			style = "Highlight", -- Highlight, BoxHandleAdornment
-
-			transparency = 0, -- boxhandleadornment
-
-			fillTransparecy = 0, -- highlight
-			outlineTransparency = 0, -- highlight
-		},
-
-		text = {
-			enabled = false,
-            font = "Monospace", -- UI, System, Plex, Monospace (some executors may only support  1 font)
-
-			transparency = 0,
-			color = {255, 255, 255},
-
-			outline = {
-				enabled = true,
-				color = {0, 0, 0},
-			},
-		},
-	}
-}
-
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
@@ -54,6 +26,66 @@ local data_config = {
 	file = "ESP9999",
 	extension = ".lua",
 }
+
+if not config then 
+	local defaultConfig = {
+		ESP = {
+			chams = {
+				enabled = true,
+				style = "Highlight", -- Highlight, BoxHandleAdornment
+
+				transparency = 0, -- boxhandleadornment
+
+				fillTransparecy = 0, -- highlight
+				outlineTransparency = 0, -- highlight
+			},
+
+			text = {
+				enabled = false,
+				font = "Monospace", -- UI, System, Plex, Monospace (some executors may only support  1 font)
+
+				offset = 40,
+				transparency = 0,
+				color = {255, 255, 255},
+
+				outline = {
+					enabled = true,
+					color = {0, 0, 0},
+				},
+			},
+		}
+	}
+
+	pcall(function()
+		if isfile(data_config.file..data_config.extension) then
+			local data = HttpService:JSONDecode(readfile(data_config.file..data_config.extension))
+
+            --[[for name, tab in next, data do
+                for setting, value in next, tab do
+                    if typeof(value) == "table" then 
+                        data[name][setting] = Color3.fromRGB(table.unpack(value))
+                    end
+                end
+            end]]
+
+			for name, tab in next, config do
+				for setting, value in next, tab do
+					if not data[name][setting] then
+						data[name][setting] = value
+					end    
+				end
+			end
+
+			config = data
+			ArrayField:Notify({
+				Title = "Configuration loaded", 
+				Content = "The configuration file for this script has been loaded from a previous session"
+			})
+		else 
+			config = defaultConfig
+		end
+	end)
+end
 
 local function convertToColor(value)
 	return Color3.fromRGB(table.unpack(value))
@@ -180,36 +212,6 @@ local function saveConfiguration()
 	end)
 end
 
-local function loadConfiguration()
-	pcall(function()
-		if isfile(data_config.file..data_config.extension) then
-			local data = HttpService:JSONDecode(readfile(data_config.file..data_config.extension))
-
-            --[[for name, tab in next, data do
-                for setting, value in next, tab do
-                    if typeof(value) == "table" then 
-                        data[name][setting] = Color3.fromRGB(table.unpack(value))
-                    end
-                end
-            end]]
-
-			for name, tab in next, config do
-				for setting, value in next, tab do
-					if not data[name][setting] then
-						data[name][setting] = value
-					end    
-				end
-			end
-
-			config = data
-			ArrayField:Notify({
-				Title = "Configuration loaded", 
-				Content = "The configuration file for this script has been loaded from a previous session"
-			})
-		end
-	end)
-end 
-
 local function onCharacterAdded(player: Player, character: Model)
 	if not player or not character then
 		return
@@ -248,8 +250,6 @@ local function onPlayerRemoving(player: Player)
 	end
 end
 
-loadConfiguration()
-
 connectionsModule:AddConnection("preRender", RunService.PreRender:Connect(function()
 	local localPosition = LocalPlayer.Character and LocalPlayer.Character:GetPivot().Position
 
@@ -267,7 +267,7 @@ connectionsModule:AddConnection("preRender", RunService.PreRender:Connect(functi
 
 				if isVisible then
 					data.text.Visible = true
-					data.text.Position = Vector2.new(position2D.X, position2D.Y - 35)
+					data.text.Position = Vector2.new(position2D.X, position2D.Y - config.ESP.text.offset)
 					data.text.Text = `[{math.floor(distance * 10) / 10}] {player.Name}` --string.format("%s\nHealth: %d, Distance: %0.1f", player.Name, health, distance)
 				end
 			end

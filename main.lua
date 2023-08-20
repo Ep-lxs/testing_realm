@@ -68,11 +68,13 @@ if not config then
                 end
             end]]
 
-			for name, tab in next, defaultConfig do
-				for setting, value in next, tab do
-					if not data[name][setting] then
-						data[name][setting] = value
-					end    
+			for tabName, tab in next, defaultConfig do
+				for sectionName, section in next, tab do
+					for setting, value in next, section do
+						if not data[tabName][sectionName][setting] then
+							data[tabName][sectionName][setting] = value
+						end    
+					end
 				end
 			end
 
@@ -277,31 +279,11 @@ connectionsModule:AddConnection("preRender", RunService.PreRender:Connect(functi
 	end
 end))
 
-Players.PlayerAdded:Connect(onPlayerAdded)
-Players.PlayerRemoving:Connect(onPlayerRemoving)
+connectionsModule:AddConnection("PlayerAdded", Players.PlayerAdded:Connect(onPlayerAdded))
+connectionsModule:AddConnection("PlayerRemoving", Players.PlayerRemoving:Connect(onPlayerRemoving))
 for _, player in ipairs(Players:GetPlayers()) do
 	onPlayerAdded(player)
 end
-
---[[connectionsModule:AddConnection("heartbeat", RunService.Heartbeat:Connect(function()
-    for player, data in next, esp do
-        local highlight, billboard = data.highlight, data.billboard
-        highlight.Enabled, billboard.Enabled = config.ESP.enabled, config.ESP.enabled
-
-        if config.ESP.enabled then -- only update if necessary
-            highlight.FillTransparency = config.ESP.fillTransparency or 0
-            highlight.FillColor = player.TeamColor.Color --config.ESP.fillColor or Color3.fromRGB(0, 0, 0)
-            highlight.OutlineTransparency = config.ESP.outlineTransparency or 0
-            highlight.OutlineColor = player.TeamColor.Color--config.ESP.outlineColor or Color3.fromRGB(0, 0, 0)
-
-            local label = billboard:FindFirstChildOfClass("TextLabel")
-            label.TextStrokeTransparency = config.ESP.textStrokeTransparency or 0.9
-            label.TextStrokeColor3 = config.ESP.textStrokeColor or Color3.fromRGB(0, 0, 0)
-            label.TextTransparency = config.ESP.textTransparency or 0
-            label.TextColor3 = config.ESP.textColor or Color3.fromRGB(255, 255, 255)
-        end
-    end
-end))]]
 
 local window = ArrayField:CreateWindow({
 	Name = "Counter Blox",

@@ -68,7 +68,7 @@ if not config then
                 end
             end]]
 
-			for name, tab in next, config do
+			for name, tab in next, defaultConfig do
 				for setting, value in next, tab do
 					if not data[name][setting] then
 						data[name][setting] = value
@@ -349,7 +349,7 @@ visuals:CreateButton({
 		for _, data in next, esp.list do
 			data:Destroy()
 		end
-		table.clear(esp)
+		table.clear(esp.list)
 
 		ArrayField:Destroy()
 	end,

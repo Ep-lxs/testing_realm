@@ -68,7 +68,11 @@ if not config then
                 end
             end]]
 
-			for tabName, tab in next, defaultConfig do
+			if not data.ESP.text.offset then
+				data.ESP.text.offset = 40
+			end
+
+			--[[for tabName, tab in next, defaultConfig do
 				for sectionName, section in next, tab do
 					for setting, value in next, section do
 						if not data[tabName][sectionName][setting] then
@@ -76,7 +80,7 @@ if not config then
 						end    
 					end
 				end
-			end
+			end]]
 
 			config = data
 			ArrayField:Notify({

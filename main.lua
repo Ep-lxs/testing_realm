@@ -8,6 +8,7 @@ local LocalPlayer = Players.LocalPlayer
 local connections = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ep-lxs/gay/main/twink.lua"))()
 local ArrayField = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/ArrayField/main/Source.lua'))()
 
+local playerConns = connections.new("player")
 local humanoidModule = connections.new("humanoid")
 local characterAddedModule = connections.new("character")
 local connectionsModule = connections.new("connections") -- general connections such as RunService, Players, etc
@@ -123,6 +124,7 @@ function esp:Create(player: Player)
 	textDrawing.OutlineColor = convertToColor(config.ESP.text.outline.color)
     textDrawing.Color = convertToColor(config.ESP.text.color)
     textDrawing.Font = Drawing.Fonts[config.ESP.text.enabled]
+	textDrawing.Visible = config.ESP.text.enabled
     textDrawing.Text = ""
     textDrawing.Size = 15
 
@@ -143,11 +145,11 @@ function esp:Destroy()
 	self = nil
 end
 
-function esp.Update(category: string, change: string)
+function esp.Update(category: string, change: string?)
 	for player, data in next, esp.list do
 		task.spawn(function()
 			if category:lower() == "chams" then
-				if change == "enabled" then
+				if change:lower() == "enabled" then
 					if type(data) == "table" then
 						for _, adornment in next, data do
 							adornment.Visible = config.ESP.chams.enabled
@@ -155,7 +157,7 @@ function esp.Update(category: string, change: string)
 					else
 						data.chams.Enabled = config.ESP.chams.enabled
 					end
-				elseif change == "style" then
+				elseif change:lower() == "style" then
 					data:Destroy()
 					esp:Create(player)
 				elseif string.find(change:lower(), "transparency") then 
@@ -167,6 +169,15 @@ function esp.Update(category: string, change: string)
 						data.chams.OutlineTransparency, data.chams.FillTransparency = config.ESP.chams.outlineTransparency, config.ESP.chams.FillTransparency
 					end
 				end
+			elseif category:lower() == "text" then
+				--if change:lower() == "enabled" then
+					data.text.Visible = config.ESP.text.enabled
+				--elseif change:lower() == "font" then
+					data.text.Font = Drawing.Fonts[config.ESP.text.font]
+				--elseif change:lower() == "outline" then
+					data.text.Outline = config.ESP.text.outline.enabled
+					data.text.OutlineColor = convertToColor(config.ESP.text.outline.color)
+				--end
 			end
 		end)
 	end
@@ -332,7 +343,7 @@ visuals:CreateDropdown({
 		esp.Update("chams", "style")
 		saveConfiguration()
 	end,
- })
+})
 
 visuals:CreateSection("Text")
 
@@ -343,6 +354,25 @@ visuals:CreateToggle({
 	Callback = function(bool: boolean)
 		config.ESP.chams.enabled = bool
 		esp.Update("text", "enabled")
+		saveConfiguration()
+	end,
+})
+
+visuals:CreateDropdown({
+	Name = "Font - some executors may not support every font",
+	Options = (function()
+		local fonts = {}
+		for font, _ in next, fonts do
+			table.insert(fonts, font)
+		end
+		return fonts
+	end)(),
+	CurrentOption = config.ESP.text.font,
+	MultiSelection = false,
+	Flag = "",
+	Callback = function(option: string)
+		config.ESP.text.font = option
+		esp.Update("text", "font")
 		saveConfiguration()
 	end,
 })

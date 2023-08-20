@@ -5,12 +5,12 @@ local CoreGui = game:GetService("CoreGui")
 
 local LocalPlayer = Players.LocalPlayer
 
-local twink = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ep-lxs/gay/main/twink.lua"))()
+local connections = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ep-lxs/gay/main/twink.lua"))()
 local ArrayField = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/ArrayField/main/Source.lua'))()
 
-local humanoidModule = twink.new("humanoid")
-local characterAddedModule = twink.new("character")
-local connectionsModule = twink.new("connections") -- general connections such as RunService, userinputservice, etc
+local humanoidModule = connections.new("humanoid")
+local characterAddedModule = connections.new("character")
+local connectionsModule = connections.new("connections") -- general connections such as RunService, Players, etc
 
 local data_config = {
 	file = "ESP9999",

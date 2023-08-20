@@ -1,13 +1,3 @@
---[[
-
-TO DO: 
-- add UI (make visible/invisible depending on chams type, so if highlight then fill and outline transparency if adornment then transparency)
-
-- See if saving system works as intended
-
-AFTER TO DO:
-- boxes and text (drawing.new) EWWW
-]]
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
@@ -42,7 +32,7 @@ if not config then
 
 			text = {
 				enabled = false,
-				font = "Monospace", -- UI, System, Plex, Monospace (some executors may only support  1 font)
+				font = "Monospace", -- UI, System, Plex, Monospace (some executors may only support 1 font)
 
 				offset = 40,
 				transparency = 0,
@@ -60,27 +50,9 @@ if not config then
 		if isfile(data_config.file..data_config.extension) then
 			local data = HttpService:JSONDecode(readfile(data_config.file..data_config.extension))
 
-            --[[for name, tab in next, data do
-                for setting, value in next, tab do
-                    if typeof(value) == "table" then 
-                        data[name][setting] = Color3.fromRGB(table.unpack(value))
-                    end
-                end
-            end]]
-
 			if not data.ESP.text.offset then
 				data.ESP.text.offset = 40
 			end
-
-			--[[for tabName, tab in next, defaultConfig do
-				for sectionName, section in next, tab do
-					for setting, value in next, section do
-						if not data[tabName][sectionName][setting] then
-							data[tabName][sectionName][setting] = value
-						end    
-					end
-				end
-			end]]
 
 			config = data
 			ArrayField:Notify({
@@ -202,17 +174,6 @@ end
 
 local function saveConfiguration()
 	pcall(function()
-        --[[local data = {}
-
-        for name, tab in next, config do
-            if not data[name] then
-                data[name] = {}
-            end
-            for setting, value in next, tab do
-                data[name][setting] = value
-            end
-        end]]
-
 		local JSON = HttpService:JSONEncode(config)
 		writefile(data_config.file..data_config.extension, JSON)
 	end)
@@ -302,31 +263,30 @@ local window = ArrayField:CreateWindow({
 	LoadingSubtitle = "by ???",
 	ConfigurationSaving = {
 		Enabled = false,
-		FolderName = nil, -- Create a custom folder for your hub/game
+		FolderName = nil,
 		FileName = ""
 	 },
 	 Discord = {
 		Enabled = false,
-		Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
-		RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+		Invite = "",
+		RememberJoins = true 
 	 },
-	 KeySystem = false, -- Set this to true to use our key system
+	 KeySystem = false,
 	 KeySettings = {
-		Title = "Untitled",
-		Subtitle = "Key System",
-		Note = "No method of obtaining the key is provided",
-		FileName = "Key", -- It is recommended to use something unique as other scripts using ArrayField may overwrite your key file
-		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like ArrayField to get the key from
+		Title = "",
+		Subtitle = "",
+		Note = "",
+		FileName = "",
+		SaveKey = true, 
+		GrabKeyFromSite = false,
 		Actions = {
 			  [1] = {
-				  Text = 'Click here to copy the key link <--',
+				  Text = '',
 				  OnPress = function()
-					  print('Pressed')
 				  end,
 				  }
 			  },
-		Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+		Key = {""} 
 	 }
 })
 

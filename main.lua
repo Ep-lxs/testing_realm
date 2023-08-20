@@ -368,6 +368,19 @@ visuals:CreateToggle({
 	end,
 })
 
+visuals:CreateDropdown({
+	Name = "Style",
+	Options = {"Highlight", "BoxHandleAdornment"},
+	CurrentOption = config.ESP.chams.style,
+	MultiSelection = false,
+	Flag = "",
+	Callback = function(option: string)
+		config.ESP.chams.style = option
+		esp.Update("chams", "style")
+		saveConfiguration()
+	end,
+ })
+
 visuals:CreateSection("Text")
 
 visuals:CreateToggle({

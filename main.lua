@@ -13,7 +13,7 @@ getgenv().config = {
 	ESP = {
 		chams = {
 			enabled = true,
-			style = "Highlight",
+			style = "Highlight", -- Highlight, BoxHandleAdornment
 
 			transparency = 0, -- boxhandleadornment
 
@@ -29,8 +29,8 @@ getgenv().config = {
 			color = {255, 255, 255},
 
 			outline = {
-				transparency = 0.8,
-				color = {0, 20, 0},
+				enabled = true,
+				color = {0, 0, 0},
 			},
 		},
 	}
@@ -109,14 +109,14 @@ function esp:Create(player: Player)
 
     local textDrawing = Drawing.new("Text")
     textDrawing.Center = true
-    textDrawing.Outline = false
-    textDrawing.Color = Color3.new(1, 1, 1)
+    textDrawing.Outline = config.ESP.text.outline.enabled
+	textDrawing.OutlineColor = convertToColor(config.ESP.text.outline.color)
+    textDrawing.Color = convertToColor(config.ESP.text.color)
     textDrawing.Font = Drawing.Fonts[config.ESP.text.enabled]
     textDrawing.Text = ""
     textDrawing.Size = 15
 
     object.text = textDrawing
-
 	esp.list[player] = object
 end
 

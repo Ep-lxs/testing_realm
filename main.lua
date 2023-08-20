@@ -170,14 +170,10 @@ function esp.Update(category: string, change: string?)
 					end
 				end
 			elseif category:lower() == "text" then
-				--if change:lower() == "enabled" then
-					data.text.Visible = config.ESP.text.enabled
-				--elseif change:lower() == "font" then
-					data.text.Font = Drawing.Fonts[config.ESP.text.font]
-				--elseif change:lower() == "outline" then
-					data.text.Outline = config.ESP.text.outline.enabled
-					data.text.OutlineColor = convertToColor(config.ESP.text.outline.color)
-				--end
+				data.text.Visible = config.ESP.text.enabled
+				data.text.Font = Drawing.Fonts[config.ESP.text.font]
+				data.text.Outline = config.ESP.text.outline.enabled
+				data.text.OutlineColor = convertToColor(config.ESP.text.outline.color)
 			end
 		end)
 	end
@@ -359,14 +355,8 @@ visuals:CreateToggle({
 })
 
 visuals:CreateDropdown({
-	Name = "Font - some executors may not support every font",
-	Options = (function()
-		local fonts = {}
-		for font, _ in next, fonts do
-			table.insert(fonts, font)
-		end
-		return fonts
-	end)(),
+	Name = "Font",
+	Options = {"UI", "System", "Plex", "Monospace"},
 	CurrentOption = config.ESP.text.font,
 	MultiSelection = false,
 	Flag = "",

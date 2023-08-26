@@ -14,46 +14,16 @@ local characterAddedModule = connections.new("character")
 local connectionsModule = connections.new("connections") -- general connections such as RunService, Players, etc
 
 local data_config = {
+	folder = "???",
 	file = "ESP9999",
 	extension = ".lua",
 }
 
 if not config then 
-	local defaultConfig = {
-		ESP = {
-			chams = {
-				enabled = true,
-				style = "Highlight", -- Highlight, BoxHandleAdornment
-
-				transparency = 0, -- boxhandleadornment
-
-				fillTransparecy = 0, -- highlight
-				outlineTransparency = 0, -- highlight
-			},
-
-			text = {
-				enabled = false,
-				font = "Monospace", -- UI, System, Plex, Monospace (some executors may only support 1 font)
-
-				offset = 40,
-				transparency = 0,
-				color = {255, 255, 255},
-
-				outline = {
-					enabled = true,
-					color = {0, 0, 0},
-				},
-			},
-		}
-	}
-
 	pcall(function()
-		if isfile(data_config.file..data_config.extension) then
-			local data = HttpService:JSONDecode(readfile(data_config.file..data_config.extension))
-
-			if not data.ESP.text.offset then
-				data.ESP.text.offset = 40
-			end
+		if isfile(data_config.folder..data_config.file..data_config.extension) then
+			local data = HttpService:JSONDecode(readfile(data_config.folder..data_config.file..data_config.extension))
+			data.ESP.text.offset = 10
 
 			config = data
 			ArrayField:Notify({
@@ -61,7 +31,33 @@ if not config then
 				Content = "The configuration file for this script has been loaded from a previous session"
 			})
 		else 
-			config = defaultConfig
+			config = {
+				ESP = {
+					chams = {
+						enabled = true,
+						style = "Highlight", -- Highlight, BoxHandleAdornment
+
+						transparency = 0, -- boxhandleadornment
+
+						fillTransparecy = 0, -- highlight
+						outlineTransparency = 0, -- highlight
+					},
+
+					text = {
+						enabled = false,
+						font = "Monospace", -- UI, System, Plex, Monospace (some executors may only support 1 font)
+
+						offset = 10,
+						transparency = 0,
+						color = {255, 255, 255},
+
+						outline = {
+							enabled = true,
+							color = {0, 0, 0},
+						},
+					},
+				}
+			}
 		end
 	end)
 end
@@ -182,7 +178,7 @@ end
 local function saveConfiguration()
 	pcall(function()
 		local JSON = HttpService:JSONEncode(config)
-		writefile(data_config.file..data_config.extension, JSON)
+		writefile(data_config.folder..data_config.file..data_config.extension, JSON)
 	end)
 end
 
@@ -244,7 +240,7 @@ connectionsModule:AddConnection("preRender", RunService.PreRender:Connect(functi
 				--local health = humanoid and humanoid.Health or 0
 				local distance = localPosition and (player.Character:GetPivot().Position - localPosition).Magnitude or -1
 
-				local position2D, isVisible = getViewportPosition(player.Character)
+				local position2D, isVisible = getViewportPosition(player.Character.Head)
 
 				if isVisible then
 					data.text.Visible = true

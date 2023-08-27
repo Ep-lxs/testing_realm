@@ -243,7 +243,7 @@ connectionsModule:AddConnection("preRender", RunService.PreRender:Connect(functi
 
 				if isVisible then
 					data.text.Visible = true
-					data.text.Position = Vector2.new(position2D.X, position2D.Y - config.ESP.text.offset)
+					data.text.Position = Vector2.new(position2D.X, position2D.Y)
 					data.text.Text = `[{math.floor(distance * 10) / 10}] {player.Name}` --string.format("%s\nHealth: %d, Distance: %0.1f", player.Name, health, distance)
 				end
 			end

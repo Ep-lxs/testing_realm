@@ -23,7 +23,7 @@ if not config then
 	pcall(function()
 		if isfile(data_config.folder..data_config.file..data_config.extension) then
 			local data = HttpService:JSONDecode(readfile(data_config.folder..data_config.file..data_config.extension))
-			data.ESP.text.offset = 10
+			data.ESP.text.offset = nil
 
 			config = data
 			ArrayField:Notify({
@@ -47,7 +47,6 @@ if not config then
 						enabled = false,
 						font = "Monospace", -- UI, System, Plex, Monospace (some executors may only support 1 font)
 
-						offset = 10,
 						transparency = 0,
 						color = {255, 255, 255},
 
@@ -66,8 +65,8 @@ local function convertToColor(value)
 	return Color3.fromRGB(table.unpack(value))
 end
 
-local function getViewportPosition(model)
-    local position = model:GetPivot().Position
+local function getViewportPosition(model: PVInstance | Vector3)
+    local position = typeof(model) == "Instance" and model:GetPivot().Position or model
     local vector3, visible = workspace.CurrentCamera:WorldToViewportPoint(position)
 
     return Vector2.new(vector3.X, vector3.Y), visible
@@ -240,7 +239,7 @@ connectionsModule:AddConnection("preRender", RunService.PreRender:Connect(functi
 				--local health = humanoid and humanoid.Health or 0
 				local distance = localPosition and (player.Character:GetPivot().Position - localPosition).Magnitude or -1
 
-				local position2D, isVisible = getViewportPosition(player.Character.Head)
+				local position2D, isVisible = getViewportPosition(player.Character.Head.Position + Vector3.new(0, player.Character.Head.Size.Y, 0))
 
 				if isVisible then
 					data.text.Visible = true

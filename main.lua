@@ -91,10 +91,10 @@ function esp:Create(player: Player)
 		local highlight = Instance.new("Highlight")
 		highlight.FillTransparency = config.ESP.chams.fillTransparency
 		highlight.OutlineTransparency = config.ESP.chams.outlineTransparency
-		highlight.FillColor = player.TeamColor.Color
-		highlight.OutlineColor = player.TeamColor.Color
+		highlight.FillColor = config.ESP.chams.teamColor and player.TeamColor.Color or convertToColor(config.ESP.chams.color)
+		highlight.OutlineColor = config.ESP.chams.teamColor and player.TeamColor.Color or convertToColor(config.ESP.chams.color)
 		highlight.DepthMode = "AlwaysOnTop"
-		highlight.Enabled = config.ESP.chams.enabled
+		highlight.Enabled = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
 		highlight.Adornee = player.Character
 		highlight.Parent = CoreGui
 
@@ -106,9 +106,9 @@ function esp:Create(player: Player)
 			if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
 				local adornment = Instance.new("BoxHandleAdornment")
 				adornment.Size = v.Size + Vector3.new(0.01, 0.01, 0.01)
-				adornment.Color3 = player.TeamColor.Color
+				adornment.Color3 = config.ESP.text.teamColor and player.TeamColor.Color or convertToColor(config.ESP.text.color)
 				adornment.Transparency = config.ESP.chams.transparency
-				adornment.Visible = config.ESP.chams.enabled
+				adornment.Visible = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
 				adornment.Adornee = v
 				adornment.Parent = CoreGui
 
@@ -122,10 +122,10 @@ function esp:Create(player: Player)
     textDrawing.Outline = config.ESP.text.outline.enabled
 	textDrawing.OutlineColor = convertToColor(config.ESP.text.outline.color)
     textDrawing.Color = convertToColor(config.ESP.text.color)
-    textDrawing.Font = Drawing.Fonts[config.ESP.text.enabled]
-	textDrawing.Visible = config.ESP.text.enabled
+    textDrawing.Font = Drawing.Fonts[config.ESP.text.font]
+	textDrawing.Visible = config.ESP.text.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
     textDrawing.Text = ""
-    textDrawing.Size = 15
+    textDrawing.Size = 14
 
     object.text = textDrawing
 	esp.list[player] = object
@@ -148,13 +148,13 @@ function esp.Update(category: string, change: string?)
 	for player, data in next, esp.list do
 		task.spawn(function()
 			if category:lower() == "chams" then
-				if change:lower() == "enabled" then
+				if change:lower() == "enabled" or change:lower() == "teamcheck" then
 					if type(data) == "table" then
 						for _, adornment in next, data do
-							adornment.Visible = config.ESP.chams.enabled
+							adornment.Visible = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
 						end
 					else
-						data.chams.Enabled = config.ESP.chams.enabled
+						data.chams.Enabled = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
 					end
 				elseif change:lower() == "style" then
 					data:Destroy()
@@ -167,6 +167,8 @@ function esp.Update(category: string, change: string?)
 					else
 						data.chams.OutlineTransparency, data.chams.FillTransparency = config.ESP.chams.outlineTransparency, config.ESP.chams.FillTransparency
 					end
+				elseif string.find(change:lower(), "color") then
+					
 				end
 			elseif category:lower() == "text" then
 				data.text.Visible = config.ESP.text.enabled

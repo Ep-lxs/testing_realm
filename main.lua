@@ -31,9 +31,14 @@ if not config then
 		else 
 			config = {
 				ESP = {
+					teamCheck = true, -- Whether to show teammates or not (enabled = show)
+
 					chams = {
 						enabled = true,
 						style = "Highlight", -- Highlight, BoxHandleAdornment
+						
+						teamColor = true, -- Whether to use the TeamColor or not
+						color = {0, 0, 0}, -- if the TeamColor setting is disabled the color of the chams will be this
 
 						transparency = 0, -- boxhandleadornment
 
@@ -46,7 +51,8 @@ if not config then
 						font = "Monospace", -- UI, System, Plex, Monospace (some executors may only support 1 font)
 
 						transparency = 0,
-						color = {255, 255, 255},
+						teamColor = false, -- Whether to use the TeamColor or not
+						color = {255, 255, 255}, -- if the TeamColor setting is disabled the color of the text will be this
 
 						outline = {
 							enabled = true,

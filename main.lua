@@ -8,9 +8,7 @@ local LocalPlayer = Players.LocalPlayer
 local connections = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ep-lxs/gay/main/twink.lua"))()
 local ArrayField = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/ArrayField/main/Source.lua'))()
 
-local playerConns = connections.new("player")
-local humanoidModule = connections.new("humanoid")
-local characterAddedModule = connections.new("character")
+local playerConns = {}
 local connectionsModule = connections.new("connections") -- general connections such as RunService, Players, etc
 
 local data_config = {
@@ -189,7 +187,7 @@ local function onCharacterAdded(player: Player, character: Model)
 	local humanoid = character:WaitForChild("Humanoid", math.huge)
 	humanoid.DisplayDistanceType = if config.ESP.text.enabled then Enum.HumanoidDisplayDistanceType.None else Enum.HumanoidDisplayDistanceType.Viewer
 
-	humanoidModule:AddConnection(player.UserId, humanoid.Died:Once(function()
+	playerConns[player]:AddConnection("humanoid", humanoid.Died:Once(function()
 		local data = esp.list[player]
 		if data then
 			data:Destroy()
@@ -207,18 +205,18 @@ local function onPlayerAdded(player: Player)
 	if not player or player == LocalPlayer then
 		return
 	end
+	playerConns[player] = connections.new()
 
 	if player.Character then
 		onCharacterAdded(player, player.Character)
 	end
-	characterAddedModule:AddConnection(player.UserId, player.CharacterAdded:Connect(function(character)
+	playerConns[player]:AddConnection("character", player.CharacterAdded:Connect(function(character)
 		onCharacterAdded(player, character)
 	end))
 end
 
 local function onPlayerRemoving(player: Player)
-	humanoidModule:RemoveConnection(player.UserId)
-	characterAddedModule:RemoveConnection(player.UserId)
+	playerConns[player]:Destroy()
 
 	local data = esp.list[player]
 	if data then
@@ -256,7 +254,7 @@ end))
 connectionsModule:AddConnection("PlayerAdded", Players.PlayerAdded:Connect(onPlayerAdded))
 connectionsModule:AddConnection("PlayerRemoving", Players.PlayerRemoving:Connect(onPlayerRemoving))
 for _, player in ipairs(Players:GetPlayers()) do
-	onPlayerAdded(player)
+	task.spawn(onPlayerAdded, player)
 end
 
 local window = ArrayField:CreateWindow({
@@ -297,8 +295,10 @@ local visuals = window:CreateTab("ESP")
 visuals:CreateButton({
 	Name = "Destroy",
 	Callback = function()
-		humanoidModule:Destroy()
-		characterAddedModule:Destroy()
+		for _,v in next, playerConns do
+			v:Destroy()
+		end
+		table.clear(playerConns)
 		connectionsModule:Destroy()
 
 		for _, data in next, esp.list do

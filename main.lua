@@ -144,39 +144,40 @@ function esp:Destroy()
 	self = nil
 end
 
-function esp.Update(category: string, change: string?)
-	for player, data in next, esp.list do
-		task.spawn(function()
-			if category:lower() == "chams" then
-				if change:lower() == "enabled" or change:lower() == "teamcheck" then
-					if type(data) == "table" then
-						for _, adornment in next, data do
-							adornment.Visible = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
-						end
+function esp.Update(categories)
+	local list = self == esp and esp.list or {self}
+
+	for category, change in next, categories do
+		for player, data in next, esp.list do
+			task.spawn(function()
+				if category:lower() == "chams" then
+					if change and change == "style" then
+						data:Destroy()
+						esp:Create(player)
 					else
-						data.chams.Enabled = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
-					end
-				elseif change:lower() == "style" then
-					data:Destroy()
-					esp:Create(player)
-				elseif string.find(change:lower(), "transparency") then 
-					if type(data) == "table" then
-						for _, adornment in next, data do
-							adornment.transparency = config.ESP.chams.transparency
+						if type(data.chams) == "table" then
+							for _, adornment in next, data.chams do
+								adornment.Color3 = config.ESP.text.teamColor and player.TeamColor.Color or convertToColor(config.ESP.text.color)
+								adornment.Transparency = config.ESP.chams.transparency
+								adornment.Visible = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
+							end
+						else
+							data.chams.FillColor = config.ESP.chams.teamColor and player.TeamColor.Color or convertToColor(config.ESP.chams.color)
+							data.chams.OutlineColor = config.ESP.chams.teamColor and player.TeamColor.Color or convertToColor(config.ESP.chams.color)
+							data.chams.Enabled = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
+							data.chams.OutlineTransparency, data.chams.FillTransparency = config.ESP.chams.outlineTransparency, config.ESP.chams.FillTransparency
 						end
-					else
-						data.chams.OutlineTransparency, data.chams.FillTransparency = config.ESP.chams.outlineTransparency, config.ESP.chams.FillTransparency
 					end
-				elseif string.find(change:lower(), "color") then
-					
+
+				elseif category:lower() == "text" then
+					data.text.Visible = config.ESP.text.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
+					data.text.Font = Drawing.Fonts[config.ESP.text.font]
+					data.text.Outline = config.ESP.text.outline.enabled
+					data.text.Color = config.ESP.text.teamColor and player.TeamColor.Color or convertToColor(config.ESP.text.color)
+					data.text.OutlineColor = convertToColor(config.ESP.text.outline.color)
 				end
-			elseif category:lower() == "text" then
-				data.text.Visible = config.ESP.text.enabled
-				data.text.Font = Drawing.Fonts[config.ESP.text.font]
-				data.text.Outline = config.ESP.text.outline.enabled
-				data.text.OutlineColor = convertToColor(config.ESP.text.outline.color)
-			end
-		end)
+			end)
+		end
 	end
 end
 
@@ -326,7 +327,7 @@ visuals:CreateToggle({
 	Flag = "",
 	Callback = function(bool: boolean)
 		config.ESP.chams.enabled = bool
-		esp.Update("chams", "enabled")
+		esp.Update({"chams"})
 		saveConfiguration()
 	end,
 })
@@ -339,7 +340,7 @@ visuals:CreateDropdown({
 	Flag = "",
 	Callback = function(option: string)
 		config.ESP.chams.style = option
-		esp.Update("chams", "style")
+		esp.Update({chams = {"style"}})
 		saveConfiguration()
 	end,
 })
@@ -352,7 +353,7 @@ visuals:CreateToggle({
 	Flag = "",
 	Callback = function(bool: boolean)
 		config.ESP.chams.enabled = bool
-		esp.Update("text", "enabled")
+		esp.Update({"text"})
 		saveConfiguration()
 	end,
 })
@@ -365,7 +366,7 @@ visuals:CreateDropdown({
 	Flag = "",
 	Callback = function(option: string)
 		config.ESP.text.font = option
-		esp.Update("text", "font")
+		esp.Update({"text"})
 		saveConfiguration()
 	end,
 })

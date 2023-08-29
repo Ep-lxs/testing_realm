@@ -21,7 +21,22 @@ if not config then
 	pcall(function()
 		if isfile(data_config.folder..data_config.file..data_config.extension) then
 			local data = HttpService:JSONDecode(readfile(data_config.folder..data_config.file..data_config.extension))
-			data.ESP.text.offset = nil
+			if not data.ESP.teamCheck then
+				data.ESP.teamCheck = true
+			end
+			if not data.ESP.chams.teamColor then
+				data.ESP.chams.teamColor = true
+			end
+			if not data.ESP.chams.color then
+				data.ESP.chams.color = {0, 0, 0}
+			end
+
+			if not data.ESP.text.teamColor then
+				data.ESP.text.teamColor = true
+			end
+			if not data.ESP.text.color then
+				data.ESP.text.color = {0, 0, 0}
+			end
 
 			config = data
 			ArrayField:Notify({

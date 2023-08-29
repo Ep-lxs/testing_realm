@@ -88,13 +88,7 @@ function esp:Create(player: Player)
 	local object = setmetatable({}, esp)
 
 	if config.ESP.chams.style == "Highlight" then
-		local highlight = Instance.new("Highlight")
-		highlight.FillTransparency = config.ESP.chams.fillTransparency
-		highlight.OutlineTransparency = config.ESP.chams.outlineTransparency
-		highlight.FillColor = config.ESP.chams.teamColor and player.TeamColor.Color or convertToColor(config.ESP.chams.color)
-		highlight.OutlineColor = config.ESP.chams.teamColor and player.TeamColor.Color or convertToColor(config.ESP.chams.color)
-		highlight.DepthMode = "AlwaysOnTop"
-		highlight.Enabled = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
+		local highlight = Instance.new("Highlight") 
 		highlight.Adornee = player.Character
 		highlight.Parent = CoreGui
 
@@ -106,9 +100,6 @@ function esp:Create(player: Player)
 			if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
 				local adornment = Instance.new("BoxHandleAdornment")
 				adornment.Size = v.Size + Vector3.new(0.01, 0.01, 0.01)
-				adornment.Color3 = config.ESP.text.teamColor and player.TeamColor.Color or convertToColor(config.ESP.text.color)
-				adornment.Transparency = config.ESP.chams.transparency
-				adornment.Visible = config.ESP.chams.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
 				adornment.Adornee = v
 				adornment.Parent = CoreGui
 
@@ -119,16 +110,11 @@ function esp:Create(player: Player)
 
     local textDrawing = Drawing.new("Text")
     textDrawing.Center = true
-    textDrawing.Outline = config.ESP.text.outline.enabled
-	textDrawing.OutlineColor = convertToColor(config.ESP.text.outline.color)
-    textDrawing.Color = convertToColor(config.ESP.text.color)
-    textDrawing.Font = Drawing.Fonts[config.ESP.text.font]
-	textDrawing.Visible = config.ESP.text.enabled and config.ESP.teamCheck and player.TeamColor.Color == LocalPlayer.TeamColor.Color 
-    textDrawing.Text = ""
     textDrawing.Size = 14
 
     object.text = textDrawing
 	esp.list[player] = object
+	object:Update()
 end
 
 function esp:Destroy()
@@ -144,11 +130,11 @@ function esp:Destroy()
 	self = nil
 end
 
-function esp.Update(categories)
+function esp:Update(categories)
 	local list = self == esp and esp.list or {self}
 
 	for category, change in next, categories do
-		for player, data in next, esp.list do
+		for player, data in next, list do
 			task.spawn(function()
 				if category:lower() == "chams" then
 					if change and change == "style" then
@@ -327,7 +313,7 @@ visuals:CreateToggle({
 	Flag = "",
 	Callback = function(bool: boolean)
 		config.ESP.chams.enabled = bool
-		esp.Update({"chams"})
+		esp:Update({"chams"})
 		saveConfiguration()
 	end,
 })
@@ -340,7 +326,7 @@ visuals:CreateDropdown({
 	Flag = "",
 	Callback = function(option: string)
 		config.ESP.chams.style = option
-		esp.Update({chams = {"style"}})
+		esp:Update({chams = {"style"}})
 		saveConfiguration()
 	end,
 })
@@ -353,7 +339,7 @@ visuals:CreateToggle({
 	Flag = "",
 	Callback = function(bool: boolean)
 		config.ESP.chams.enabled = bool
-		esp.Update({"text"})
+		esp:Update({"text"})
 		saveConfiguration()
 	end,
 })
@@ -366,7 +352,7 @@ visuals:CreateDropdown({
 	Flag = "",
 	Callback = function(option: string)
 		config.ESP.text.font = option
-		esp.Update({"text"})
+		esp:Update({"text"})
 		saveConfiguration()
 	end,
 })

@@ -250,7 +250,7 @@ connectionsModule:AddConnection("preRender", RunService.PreRender:Connect(functi
 				local position2D, isVisible = getViewportPosition(player.Character.Head.Position + Vector3.new(0, player.Character.Head.Size.Y, 0))
 
 				if isVisible then
-					data.text.Visible = true
+					data.text.Visible = config.ESP.text.enabled and isVisible
 					data.text.Position = Vector2.new(position2D.X, position2D.Y)
 					data.text.Text = `[{math.floor(distance * 10) / 10}] {player.Name}` --string.format("%s\nHealth: %d, Distance: %0.1f", player.Name, health, distance)
 				end

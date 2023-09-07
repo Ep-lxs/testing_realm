@@ -142,11 +142,9 @@ function esp:Destroy()
 	end
 	self.text:Remove()
 
-	for i, v in next, esp.list do
-		if v == self then
-			table.remove(esp.list, i)
-			break
-		end
+	local index = table.find(esp.list, self)
+	if index then
+		table.remove(esp.list, index)
 	end
 end
 

@@ -129,7 +129,7 @@ function esp:Create(player: Player)
 
     object.text = textDrawing
 	esp.list[player] = object
-	object:Update()
+	object:Update({"chams", "text"})
 end
 
 function esp:Destroy()

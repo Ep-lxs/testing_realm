@@ -142,7 +142,12 @@ function esp:Destroy()
 	end
 	self.text:Remove()
 
-	self = nil
+	for i, v in next, esp.list do
+		if v == self then
+			table.remove(esp.list, i)
+			break
+		end
+	end
 end
 
 function esp:Update(categories)
@@ -305,10 +310,7 @@ local visuals = window:CreateTab("ESP")
 visuals:CreateButton({
 	Name = "Destroy",
 	Callback = function()
-		for _,v in next, playerConns do
-			v:Destroy()
-		end
-		table.clear(playerConns)
+		playerConns:Destroy()
 		connectionsModule:Destroy()
 
 		for _, data in next, esp.list do
